@@ -69,6 +69,9 @@ function drawCard(deckName) {
   const label = deckName === "ghost" ? "鬼怪" : "技能";
   const resultCard = document.querySelector(`[data-result-card="${deckName}"]`);
   selectedCards[deckName] = card;
+  resultCard.dataset.cardImage = card.image || "";
+  resultCard.dataset.cardName = card.name;
+  resultCard.dataset.cardMessage = card.message;
 
   document.querySelector(`[data-card-name="${deckName}"]`).textContent = card.name;
   document.querySelector(`[data-card-message="${deckName}"]`).textContent = card.message;
@@ -88,7 +91,12 @@ document.querySelectorAll("[data-draw-button]").forEach((button) => {
 });
 
 function openCardModal(deckName) {
-  const card = selectedCards[deckName];
+  const resultCard = document.querySelector(`[data-result-card="${deckName}"]`);
+  const card = selectedCards[deckName] || {
+    image: resultCard?.dataset.cardImage,
+    name: resultCard?.dataset.cardName,
+    message: resultCard?.dataset.cardMessage,
+  };
 
   if (!card || !card.image) {
     return;
