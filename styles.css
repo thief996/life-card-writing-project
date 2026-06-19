@@ -1,13 +1,18 @@
 :root {
   color-scheme: light;
-  --ink: #1f2428;
-  --muted: #68727c;
-  --paper: #fffaf1;
-  --line: #d8c8ad;
-  --gold: #d79536;
-  --teal: #3d8c87;
-  --rose: #b95f67;
-  --shadow: 0 24px 80px rgba(35, 31, 24, 0.16);
+  --ink: #2d3f46;
+  --muted: #6d7d82;
+  --paper: #fff7df;
+  --paper-soft: #fffdf5;
+  --line: #dcc999;
+  --gold: #d8a746;
+  --teal: #319896;
+  --teal-deep: #1f6f78;
+  --coral: #d77f70;
+  --coral-deep: #a94f4f;
+  --violet: #8470b7;
+  --mist: #dfeaf0;
+  --shadow: 0 24px 80px rgba(70, 84, 88, 0.18);
 }
 
 * {
@@ -20,8 +25,10 @@ body {
   color: var(--ink);
   font-family: "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif;
   background:
-    linear-gradient(135deg, rgba(185, 95, 103, 0.14), transparent 36%),
-    linear-gradient(315deg, rgba(61, 140, 135, 0.13), transparent 34%),
+    radial-gradient(circle at 10% 12%, rgba(49, 152, 150, 0.2), transparent 30%),
+    radial-gradient(circle at 88% 24%, rgba(215, 127, 112, 0.24), transparent 34%),
+    radial-gradient(circle at 82% 92%, rgba(132, 112, 183, 0.18), transparent 28%),
+    linear-gradient(180deg, #fff4cf 0%, #f9f1df 48%, #ecf3ef 100%),
     var(--paper);
 }
 
@@ -53,7 +60,7 @@ body {
 }
 
 .ghost-panel {
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid rgba(216, 167, 70, 0.42);
 }
 
 .draw-copy {
@@ -62,7 +69,7 @@ body {
 
 .eyebrow {
   margin: 0 0 10px;
-  color: var(--teal);
+  color: var(--teal-deep);
   font-size: 0.86rem;
   font-weight: 800;
   letter-spacing: 0;
@@ -70,7 +77,7 @@ body {
 }
 
 .ghost-panel .eyebrow {
-  color: var(--rose);
+  color: var(--coral-deep);
 }
 
 h1,
@@ -118,11 +125,11 @@ h1,
 }
 
 .ghost-button {
-  background: var(--rose);
+  background: linear-gradient(135deg, var(--coral-deep), var(--coral));
 }
 
 .skill-button {
-  background: var(--teal);
+  background: linear-gradient(135deg, var(--teal-deep), var(--teal));
 }
 
 .draw-status {
@@ -154,13 +161,13 @@ h1,
 
 .ghost-card {
   background:
-    linear-gradient(160deg, rgba(255, 255, 255, 0.8), rgba(255, 250, 241, 0.94)),
+    linear-gradient(160deg, rgba(255, 253, 245, 0.78), rgba(255, 239, 222, 0.94)),
     url("06_素材庫/正式輸出/引路角色卡001_隱藏NPC.png") center / cover;
 }
 
 .skill-card {
   background:
-    linear-gradient(160deg, rgba(255, 255, 255, 0.84), rgba(255, 250, 241, 0.94)),
+    linear-gradient(160deg, rgba(255, 253, 245, 0.82), rgba(223, 234, 240, 0.94)),
     url("06_素材庫/正式輸出/成就卡001_終於按下開始的人.png") center / cover;
 }
 
@@ -170,12 +177,12 @@ h1,
   width: 210px;
   aspect-ratio: 1;
   border-radius: 50%;
-  background: rgba(215, 149, 54, 0.32);
+  background: rgba(216, 167, 70, 0.34);
   filter: blur(16px);
 }
 
 .skill-card .card-aura {
-  background: rgba(61, 140, 135, 0.28);
+  background: rgba(49, 152, 150, 0.28);
 }
 
 .card-type,
@@ -190,13 +197,13 @@ h1,
   padding: 6px 10px;
   border-radius: 999px;
   color: #fff;
-  background: var(--rose);
+  background: var(--coral-deep);
   font-size: 0.82rem;
   font-weight: 800;
 }
 
 .skill-card .card-type {
-  background: var(--teal);
+  background: var(--teal-deep);
 }
 
 .result-card h2 {
@@ -205,7 +212,7 @@ h1,
 }
 
 .result-card p:last-child {
-  color: #374047;
+  color: #3e4e54;
   line-height: 1.75;
 }
 
