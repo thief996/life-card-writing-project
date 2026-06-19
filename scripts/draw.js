@@ -62,7 +62,11 @@ function drawCard(deckName) {
   document.querySelector(`[data-draw-status="${deckName}"]`).textContent = `已抽 ${label} ${deckState[deckName].drawCount} 次`;
 
   if (card.image && resultCard) {
-    resultCard.style.backgroundImage = `linear-gradient(160deg, rgba(255, 253, 245, 0.4), rgba(255, 239, 222, 0.76)), url("${card.image}")`;
+    const overlay =
+      deckName === "ghost"
+        ? "linear-gradient(160deg, rgba(255, 253, 245, 0.4), rgba(255, 239, 222, 0.76))"
+        : "linear-gradient(160deg, rgba(255, 253, 245, 0.4), rgba(223, 234, 240, 0.76))";
+    resultCard.style.backgroundImage = `${overlay}, url("${card.image}")`;
   }
 }
 
