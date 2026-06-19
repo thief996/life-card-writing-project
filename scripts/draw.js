@@ -16,16 +16,19 @@ const decks = {
   ],
   skill: [
     {
-      name: "三分鐘開場",
-      message: "不要等狀態完整。設定三分鐘，開始就算解鎖技能。",
+      name: "NPC召喚",
+      image: "09_抽牌網站/card-pools/技能卡/NPC召喚.png",
+      message: "今天不用單刷。召喚一位能給你資訊、陪伴或提醒的人。",
     },
     {
-      name: "求救訊號",
-      message: "把卡住的地方說清楚，傳給一個能接住你的人。",
+      name: "一步卷軸",
+      image: "09_抽牌網站/card-pools/技能卡/一步卷軸.png",
+      message: "不要解完整張地圖。打開卷軸，只執行下一步。",
     },
     {
-      name: "任務切片",
-      message: "把今天的大任務切成三片，只拿最小那片開始。",
+      name: "微小任務術",
+      image: "09_抽牌網站/card-pools/技能卡/微小任務術.png",
+      message: "把任務縮到小到不能再小。完成它，讓行動感先回來。",
     },
   ],
 };
@@ -128,7 +131,7 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
-fetch("09_抽牌網站/card-pools/manifest.json")
+fetch(`09_抽牌網站/card-pools/manifest.json?v=${Date.now()}`, { cache: "no-store" })
   .then((response) => response.json())
   .then((manifest) => {
     if (Array.isArray(manifest.ghost) && manifest.ghost.length > 0) {

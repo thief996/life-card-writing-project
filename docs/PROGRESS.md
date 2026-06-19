@@ -1,5 +1,29 @@
 # PROGRESS
 
+## 2026-06-19 修正技能卡快取
+
+### 今天完成什麼
+
+- 修正對外網站可能讀到舊技能卡清單的快取問題。
+- 在 `index.html` 的 `draw.js` 載入路徑加上版本號。
+- 在 `scripts/draw.js` 讀取 `manifest.json` 時加上 cache busting 與 `cache: "no-store"`。
+- 將技能卡備援資料也改成新技能卡名稱，避免 manifest 失敗時又顯示舊的 `求救訊號`。
+
+### 改了哪些重要檔案
+
+- `index.html`
+  - `scripts/draw.js` 加上版本參數。
+- `scripts/draw.js`
+  - manifest fetch 加上版本參數與 no-store。
+  - 技能卡 fallback 改為 `NPC召喚`、`一步卷軸`、`微小任務術`。
+- `docs/PROGRESS.md`
+  - 補上本次快取修正紀錄。
+
+### 做了哪些決策
+
+- 優先讓正式網站強制抓最新 manifest，避免 GitHub Pages 或瀏覽器快取造成牌庫不同步。
+- 保留 fallback，但不再保留舊技能卡名。
+
 ## 2026-06-19 加入牌卡完整圖彈窗
 
 ### 今天完成什麼
