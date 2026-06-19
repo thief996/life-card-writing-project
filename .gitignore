@@ -1,0 +1,26 @@
+# OS / editor noise
+Thumbs.db
+Desktop.ini
+.DS_Store
+.vscode/
+.idea/
+
+# Local secrets
+.env
+.env.*
+*.key
+*.pem
+*token*
+*secret*
+
+# Runtime / temporary files
+tmp/
+temp/
+*.tmp
+*.log
+
+# Local caches
+.cache/
+node_modules/
+__pycache__/
+
