@@ -34,6 +34,15 @@ const deckState = {
   ghost: { lastIndex: -1, drawCount: 0 },
   skill: { lastIndex: -1, drawCount: 0 },
 };
+const selectedCards = {
+  ghost: null,
+  skill: null,
+};
+const modal = document.querySelector("[data-card-modal]");
+const modalImage = document.querySelector("[data-modal-image]");
+const modalType = document.querySelector("[data-modal-type]");
+const modalTitle = document.querySelector("[data-modal-title]");
+const modalMessage = document.querySelector("[data-modal-message]");
 
 function pickCard(deckName) {
   const deck = decks[deckName];
@@ -56,6 +65,7 @@ function drawCard(deckName) {
   const card = pickCard(deckName);
   const label = deckName === "ghost" ? "鬼怪" : "技能";
   const resultCard = document.querySelector(`[data-result-card="${deckName}"]`);
+  selectedCards[deckName] = card;
 
   document.querySelector(`[data-card-name="${deckName}"]`).textContent = card.name;
   document.querySelector(`[data-card-message="${deckName}"]`).textContent = card.message;
@@ -72,6 +82,50 @@ function drawCard(deckName) {
 
 document.querySelectorAll("[data-draw-button]").forEach((button) => {
   button.addEventListener("click", () => drawCard(button.dataset.drawButton));
+});
+
+function openCardModal(deckName) {
+  const card = selectedCards[deckName];
+
+  if (!card || !card.image) {
+    return;
+  }
+
+  modalImage.src = card.image;
+  modalImage.alt = `${card.name}完整牌卡`;
+  modalType.textContent = deckName === "ghost" ? "鬼怪卡" : "技能卡";
+  modalTitle.textContent = card.name;
+  modalMessage.textContent = card.message;
+  modal.hidden = false;
+  document.body.classList.add("modal-open");
+  document.querySelector(".modal-close").focus();
+}
+
+function closeCardModal() {
+  modal.hidden = true;
+  document.body.classList.remove("modal-open");
+}
+
+document.querySelectorAll("[data-result-card]").forEach((cardElement) => {
+  const deckName = cardElement.dataset.resultCard;
+
+  cardElement.addEventListener("click", () => openCardModal(deckName));
+  cardElement.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      openCardModal(deckName);
+    }
+  });
+});
+
+document.querySelectorAll("[data-close-modal]").forEach((closeTarget) => {
+  closeTarget.addEventListener("click", closeCardModal);
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && !modal.hidden) {
+    closeCardModal();
+  }
 });
 
 fetch("09_抽牌網站/card-pools/manifest.json")

@@ -23,8 +23,9 @@
           </div>
         </div>
 
-        <article class="result-card ghost-card" data-result-card="ghost" aria-live="polite">
+        <article class="result-card ghost-card" data-result-card="ghost" aria-live="polite" role="button" tabindex="0" aria-label="開啟鬼怪卡完整圖">
           <div class="card-aura"></div>
+          <span class="view-hint">點圖看全貌</span>
           <p class="card-type">鬼怪卡</p>
           <h2 data-card-name="ghost">今天的怪還沒現身</h2>
           <p data-card-message="ghost">按下抽鬼怪卡，看看今天是哪一種卡關狀態出來巡邏。</p>
@@ -42,14 +43,28 @@
           </div>
         </div>
 
-        <article class="result-card skill-card" data-result-card="skill" aria-live="polite">
+        <article class="result-card skill-card" data-result-card="skill" aria-live="polite" role="button" tabindex="0" aria-label="開啟技能卡完整圖">
           <div class="card-aura"></div>
+          <span class="view-hint">點圖看全貌</span>
           <p class="card-type">技能卡</p>
           <h2 data-card-name="skill">今天的技能尚未解鎖</h2>
           <p data-card-message="skill">按下抽技能卡，取得一個今天可以立刻使用的小招式。</p>
         </article>
       </section>
     </main>
+
+    <div class="card-modal" data-card-modal hidden>
+      <div class="modal-backdrop" data-close-modal></div>
+      <section class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modal-card-title">
+        <button class="modal-close" type="button" data-close-modal aria-label="關閉完整牌卡">×</button>
+        <img class="modal-image" data-modal-image alt="" />
+        <div class="modal-copy">
+          <p class="card-type" data-modal-type>牌卡</p>
+          <h2 id="modal-card-title" data-modal-title>尚未抽牌</h2>
+          <p data-modal-message>抽牌後點擊右側圖卡，就可以在這裡看完整牌卡。</p>
+        </div>
+      </section>
+    </div>
 
     <script src="scripts/draw.js"></script>
   </body>
