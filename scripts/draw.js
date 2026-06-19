@@ -2,6 +2,7 @@ const decks = {
   ghost: [
     {
       name: "拖延幽影",
+      image: "",
       message: "今天的怪會把事情變得很大。先做最小的一步，讓它失去霧氣。",
     },
     {
@@ -54,12 +55,32 @@ function pickCard(deckName) {
 function drawCard(deckName) {
   const card = pickCard(deckName);
   const label = deckName === "ghost" ? "鬼怪" : "技能";
+  const resultCard = document.querySelector(`[data-result-card="${deckName}"]`);
 
   document.querySelector(`[data-card-name="${deckName}"]`).textContent = card.name;
   document.querySelector(`[data-card-message="${deckName}"]`).textContent = card.message;
   document.querySelector(`[data-draw-status="${deckName}"]`).textContent = `已抽 ${label} ${deckState[deckName].drawCount} 次`;
+
+  if (card.image && resultCard) {
+    resultCard.style.backgroundImage = `linear-gradient(160deg, rgba(255, 253, 245, 0.4), rgba(255, 239, 222, 0.76)), url("${card.image}")`;
+  }
 }
 
 document.querySelectorAll("[data-draw-button]").forEach((button) => {
   button.addEventListener("click", () => drawCard(button.dataset.drawButton));
 });
+
+fetch("09_抽牌網站/card-pools/manifest.json")
+  .then((response) => response.json())
+  .then((manifest) => {
+    if (Array.isArray(manifest.ghost) && manifest.ghost.length > 0) {
+      decks.ghost = manifest.ghost;
+    }
+
+    if (Array.isArray(manifest.skill) && manifest.skill.length > 0) {
+      decks.skill = manifest.skill;
+    }
+  })
+  .catch(() => {
+    // Keep the built-in starter decks available when previewing from file:// or if the manifest is missing.
+  });
