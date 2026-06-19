@@ -11,8 +11,8 @@
 - GitHub repository：<https://github.com/thief996/life-card-writing-project>
 - 本機工作資料夾：`C:\Users\User\OneDrive\文件\.Codex\人生打怪圖鑑`
 - 預設分支：`main`
-- 專案型態：內容文件、圖片素材、Notion 匯入資料與 AI 交接文件。
-- 目前沒有網站程式、後端服務、套件安裝或 build step。
+- 專案型態：內容文件、圖片素材、Notion 匯入資料、AI 交接文件與靜態抽牌網站。
+- 目前沒有後端服務、套件安裝或 build step。
 
 ## 專案用途
 
@@ -49,10 +49,15 @@
 - 已建立 Notion 資料庫規格與資料來源：
   - Notion 專案首頁：<https://app.notion.com/p/37d4864afb9d81608b3cfff8c8d7acd7>
   - Notion 牌卡資料庫：<https://app.notion.com/p/35222c576c69445181283c42f7097ea2>
+- 已建立抽牌網站初版：
+  - 網站入口：`index.html`
+  - 互動程式：`scripts/draw.js`
+  - 牌庫資料夾：`09_抽牌網站/card-pools/`
+  - 目前可按鈕抽出示範牌，之後可接正式輪抽清單。
 
 ## 啟動方式
 
-這不是一般需要啟動伺服器的程式專案，而是一個內容與素材管理專案。
+這是一個內容與素材管理專案，另有一個純靜態抽牌網站。
 
 接手時不需要啟動服務，建議依序閱讀：
 
@@ -66,10 +71,24 @@
 
 日常工作入口：
 
+- 抽牌網站：開啟 `index.html`，或用本機伺服器預覽。
 - 新副本：使用口令 `GM！開啟今日副本！`
 - 正式圖檔對照：檢查 `06_素材庫/正式輸出`
 - Notion 同步：依 `02_視覺設計/視覺規格.md` 的「Notion 圖檔巡檢規則」處理。
 - IG 文案：從 `05_貼文草稿` 讀取或新增。
+
+本機預覽抽牌網站：
+
+```powershell
+cd "C:\Users\User\OneDrive\文件\.Codex\人生打怪圖鑑"
+python -m http.server 8792 --bind 127.0.0.1
+```
+
+然後開啟：
+
+```text
+http://127.0.0.1:8792/
+```
 
 版本控管常用流程：
 
@@ -83,7 +102,11 @@ git push origin main
 
 ## 部署方式
 
-目前沒有網站或後端服務需要部署。
+目前沒有後端服務需要部署。若要發布抽牌網站，可用 GitHub Pages 或任何靜態網站平台，入口檔是：
+
+```text
+index.html
+```
 
 發布流程分成兩層：
 

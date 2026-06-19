@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>人生打怪圖鑑｜抽牌機</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="draw-panel" aria-labelledby="draw-title">
+        <div class="draw-copy">
+          <p class="eyebrow">人生打怪圖鑑</p>
+          <h1 id="draw-title">今日抽牌</h1>
+          <p class="intro">按下按鈕，從鬼怪卡、技能卡、人格晶體中抽出一張今日提示。</p>
+          <div class="draw-actions">
+            <button class="draw-button" type="button" data-draw-button>抽一張牌</button>
+            <span class="draw-status" data-draw-status>尚未抽牌</span>
+          </div>
+        </div>
+
+        <article class="result-card" data-result-card aria-live="polite">
+          <div class="card-aura"></div>
+          <p class="card-type" data-card-type>等待抽牌</p>
+          <h2 data-card-name>今天會遇見什麼？</h2>
+          <p data-card-message>你的卡片會出現在這裡。之後把檔案放進三個牌庫資料夾，就可以接上輪抽機制。</p>
+        </article>
+      </section>
+
+      <section class="library-panel" aria-labelledby="library-title">
+        <div class="section-heading">
+          <p class="eyebrow">Card Pools</p>
+          <h2 id="library-title">牌庫資料夾</h2>
+        </div>
+
+        <div class="pool-grid">
+          <article class="pool-card">
+            <span class="pool-mark ghost">鬼</span>
+            <h3>鬼怪卡</h3>
+            <p>放阻力、恐懼、卡關狀態、內在陰影或今日要面對的怪。</p>
+            <code>09_抽牌網站/card-pools/鬼怪卡</code>
+          </article>
+
+          <article class="pool-card">
+            <span class="pool-mark skill">技</span>
+            <h3>技能卡</h3>
+            <p>放能力、工具、行動提示、可使用的招式或今日可練習的技能。</p>
+            <code>09_抽牌網站/card-pools/技能卡</code>
+          </article>
+
+          <article class="pool-card">
+            <span class="pool-mark crystal">晶</span>
+            <h3>人格晶體</h3>
+            <p>放人格面向、內在資源、狀態晶體或今日可召喚的自己。</p>
+            <code>09_抽牌網站/card-pools/人格晶體</code>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <script src="scripts/draw.js"></script>
+  </body>
+</html>
