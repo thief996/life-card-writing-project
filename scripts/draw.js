@@ -42,6 +42,16 @@ const modalImage = document.querySelector("[data-modal-image]");
 const modalType = document.querySelector("[data-modal-type]");
 const modalTitle = document.querySelector("[data-modal-title]");
 const modalMessage = document.querySelector("[data-modal-message]");
+const challengeDate = document.querySelector("[data-challenge-date]");
+const challengeGhost = document.querySelector("[data-challenge-ghost]");
+const challengeSkill = document.querySelector("[data-challenge-skill]");
+const challengeTask = document.querySelector("[data-challenge-task]");
+const challengeStatus = document.querySelector("[data-challenge-status]");
+const challengeDownload = document.querySelector("[data-download-challenge]");
+const challengeState = {
+  ghost: null,
+  skill: null,
+};
 
 function pickCard(deckName) {
   const deck = decks[deckName];
@@ -88,6 +98,30 @@ function renderCard(deckName, card, resultCard, targetKey) {
   }
 }
 
+function updateChallenge() {
+  const today = new Date();
+  challengeDate.textContent = today.toLocaleDateString("zh-Hant-TW", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    weekday: "long",
+  });
+
+  challengeGhost.textContent = challengeState.ghost?.name || "尚未抽鬼怪";
+  challengeSkill.textContent = challengeState.skill?.name || "請從三張技能卡選一張";
+
+  if (challengeState.ghost && challengeState.skill) {
+    challengeTask.textContent = `今日挑戰：面對「${challengeState.ghost.name}」，請使用「${challengeState.skill.name}」。先做一個 10 分鐘內能完成的小行動，讓今天的關卡開始鬆動。`;
+    challengeStatus.textContent = "今日挑戰已生成";
+    challengeDownload.disabled = false;
+    return;
+  }
+
+  challengeTask.textContent = "抽出鬼怪與技能後，這裡會生成你的今日挑戰。";
+  challengeStatus.textContent = challengeState.ghost ? "請從三張技能卡選一張" : "先抽鬼怪，再選技能";
+  challengeDownload.disabled = true;
+}
+
 function drawCard(deckName) {
   const label = deckName === "ghost" ? "鬼怪" : "技能";
   deckState[deckName].drawCount += 1;
@@ -95,19 +129,27 @@ function drawCard(deckName) {
   if (deckName === "skill") {
     const cards = pickUniqueCards("skill", 3);
 
+    document.querySelectorAll(".skill-card-option").forEach((cardElement) => {
+      cardElement.classList.remove("is-selected");
+    });
+    challengeState.skill = null;
+
     cards.forEach((card, index) => {
       const resultCard = document.querySelector(`[data-result-card="skill"][data-card-index="${index}"]`);
       renderCard("skill", card, resultCard, `skill-${index}`);
     });
 
     document.querySelector(`[data-draw-status="${deckName}"]`).textContent = `已抽 ${label} ${deckState[deckName].drawCount} 次`;
+    updateChallenge();
     return;
   }
 
   const card = pickCard(deckName);
   const resultCard = document.querySelector(`[data-result-card="${deckName}"]`);
   renderCard(deckName, card, resultCard, deckName);
+  challengeState.ghost = card;
   document.querySelector(`[data-draw-status="${deckName}"]`).textContent = `已抽 ${label} ${deckState[deckName].drawCount} 次`;
+  updateChallenge();
 }
 
 document.querySelectorAll("[data-draw-button]").forEach((button) => {
@@ -141,11 +183,33 @@ function closeCardModal() {
   document.body.classList.remove("modal-open");
 }
 
+function selectSkillCard(cardElement) {
+  if (cardElement.dataset.resultCard !== "skill" || !cardElement.dataset.cardImage) {
+    return;
+  }
+
+  document.querySelectorAll(".skill-card-option").forEach((skillCard) => {
+    skillCard.classList.remove("is-selected");
+  });
+
+  cardElement.classList.add("is-selected");
+  challengeState.skill = {
+    image: cardElement.dataset.cardImage,
+    name: cardElement.dataset.cardName,
+    message: cardElement.dataset.cardMessage,
+  };
+  updateChallenge();
+}
+
 document.querySelectorAll("[data-result-card]").forEach((cardElement) => {
-  cardElement.addEventListener("click", () => openCardModal(cardElement));
+  cardElement.addEventListener("click", () => {
+    selectSkillCard(cardElement);
+    openCardModal(cardElement);
+  });
   cardElement.addEventListener("keydown", (event) => {
     if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
+      selectSkillCard(cardElement);
       openCardModal(cardElement);
     }
   });
@@ -160,6 +224,106 @@ document.addEventListener("keydown", (event) => {
     closeCardModal();
   }
 });
+
+function wrapCanvasText(context, text, x, y, maxWidth, lineHeight) {
+  const words = text.split("");
+  let line = "";
+  let currentY = y;
+
+  words.forEach((word) => {
+    const testLine = line + word;
+    if (context.measureText(testLine).width > maxWidth && line) {
+      context.fillText(line, x, currentY);
+      line = word;
+      currentY += lineHeight;
+    } else {
+      line = testLine;
+    }
+  });
+
+  context.fillText(line, x, currentY);
+  return currentY + lineHeight;
+}
+
+function downloadChallengeCard() {
+  if (!challengeState.ghost || !challengeState.skill) {
+    return;
+  }
+
+  const canvas = document.createElement("canvas");
+  canvas.width = 1080;
+  canvas.height = 1350;
+  const context = canvas.getContext("2d");
+
+  const gradient = context.createLinearGradient(0, 0, canvas.width, canvas.height);
+  gradient.addColorStop(0, "#fff4cf");
+  gradient.addColorStop(0.48, "#f9f1df");
+  gradient.addColorStop(1, "#dfeaf0");
+  context.fillStyle = gradient;
+  context.fillRect(0, 0, canvas.width, canvas.height);
+
+  context.fillStyle = "rgba(49, 152, 150, 0.16)";
+  context.beginPath();
+  context.arc(140, 160, 220, 0, Math.PI * 2);
+  context.fill();
+
+  context.fillStyle = "rgba(215, 127, 112, 0.18)";
+  context.beginPath();
+  context.arc(940, 260, 260, 0, Math.PI * 2);
+  context.fill();
+
+  context.strokeStyle = "rgba(216, 167, 70, 0.72)";
+  context.lineWidth = 8;
+  context.strokeRect(58, 58, 964, 1234);
+
+  context.fillStyle = "#2d3f46";
+  context.font = "900 76px Microsoft JhengHei, sans-serif";
+  context.fillText("今日挑戰", 92, 170);
+
+  context.fillStyle = "#1f6f78";
+  context.font = "800 34px Microsoft JhengHei, sans-serif";
+  context.fillText(challengeDate.textContent, 96, 230);
+
+  context.fillStyle = "rgba(255, 253, 245, 0.82)";
+  context.fillRect(92, 300, 896, 270);
+  context.fillRect(92, 620, 896, 270);
+
+  context.fillStyle = "#a94f4f";
+  context.font = "900 34px Microsoft JhengHei, sans-serif";
+  context.fillText("面對的鬼怪", 132, 360);
+  context.fillStyle = "#2d3f46";
+  context.font = "900 62px Microsoft JhengHei, sans-serif";
+  context.fillText(challengeState.ghost.name, 132, 440);
+  context.font = "400 32px Microsoft JhengHei, sans-serif";
+  wrapCanvasText(context, challengeState.ghost.message, 132, 505, 820, 44);
+
+  context.fillStyle = "#1f6f78";
+  context.font = "900 34px Microsoft JhengHei, sans-serif";
+  context.fillText("選擇的技能", 132, 680);
+  context.fillStyle = "#2d3f46";
+  context.font = "900 62px Microsoft JhengHei, sans-serif";
+  context.fillText(challengeState.skill.name, 132, 760);
+  context.font = "400 32px Microsoft JhengHei, sans-serif";
+  wrapCanvasText(context, challengeState.skill.message, 132, 825, 820, 44);
+
+  context.fillStyle = "#2d3f46";
+  context.font = "900 38px Microsoft JhengHei, sans-serif";
+  context.fillText("今日任務", 96, 990);
+  context.font = "400 34px Microsoft JhengHei, sans-serif";
+  wrapCanvasText(context, challengeTask.textContent, 96, 1050, 888, 50);
+
+  context.fillStyle = "rgba(45, 63, 70, 0.5)";
+  context.font = "700 28px Microsoft JhengHei, sans-serif";
+  context.fillText("人生打怪圖鑑", 96, 1238);
+
+  const link = document.createElement("a");
+  link.download = `今日挑戰_${challengeState.ghost.name}_${challengeState.skill.name}.png`;
+  link.href = canvas.toDataURL("image/png");
+  link.click();
+}
+
+challengeDownload.addEventListener("click", downloadChallengeCard);
+updateChallenge();
 
 fetch(`09_抽牌網站/card-pools/manifest.json?v=${Date.now()}`, { cache: "no-store" })
   .then((response) => response.json())

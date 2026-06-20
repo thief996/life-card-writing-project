@@ -69,6 +69,33 @@
           </article>
         </div>
       </section>
+
+      <section class="challenge-panel" aria-labelledby="challenge-title">
+        <div class="section-heading">
+          <p class="eyebrow">Today Quest</p>
+          <h2 id="challenge-title">今日挑戰</h2>
+        </div>
+
+        <div class="challenge-card" data-challenge-card>
+          <p class="challenge-date" data-challenge-date>等待抽牌</p>
+          <div class="challenge-grid">
+            <div>
+              <span>面對的鬼怪</span>
+              <strong data-challenge-ghost>尚未抽鬼怪</strong>
+            </div>
+            <div>
+              <span>選擇的技能</span>
+              <strong data-challenge-skill>請從三張技能卡選一張</strong>
+            </div>
+          </div>
+          <p class="challenge-task" data-challenge-task>抽出鬼怪與技能後，這裡會生成你的今日挑戰。</p>
+        </div>
+
+        <div class="challenge-actions">
+          <button class="draw-button challenge-button" type="button" data-download-challenge disabled>下載今日挑戰 PNG</button>
+          <span class="draw-status" data-challenge-status>先抽鬼怪，再選技能</span>
+        </div>
+      </section>
     </main>
 
     <div class="card-modal" data-card-modal hidden>
@@ -84,6 +111,6 @@
       </section>
     </div>
 
-    <script src="scripts/draw.js?v=20260620-three-skills-v4"></script>
+    <script src="scripts/draw.js?v=20260620-challenge-v5"></script>
   </body>
 </html>

@@ -229,6 +229,96 @@ h1,
   font-size: 0.92rem;
 }
 
+.skill-card-option.is-selected {
+  outline: 4px solid rgba(216, 167, 70, 0.86);
+  outline-offset: 4px;
+}
+
+.challenge-panel {
+  padding: 34px 0 18px;
+  border-top: 1px solid rgba(216, 167, 70, 0.42);
+}
+
+.section-heading {
+  margin-bottom: 18px;
+}
+
+.section-heading h2 {
+  margin-bottom: 0;
+  font-size: clamp(2.6rem, 6vw, 4.8rem);
+  line-height: 1;
+}
+
+.challenge-card {
+  padding: 26px;
+  border: 1px solid rgba(31, 36, 40, 0.14);
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(49, 152, 150, 0.18), transparent 30%),
+    radial-gradient(circle at 92% 12%, rgba(215, 127, 112, 0.2), transparent 28%),
+    rgba(255, 253, 245, 0.84);
+  box-shadow: var(--shadow);
+}
+
+.challenge-date {
+  margin-bottom: 18px;
+  color: var(--teal-deep);
+  font-weight: 900;
+}
+
+.challenge-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.challenge-grid div {
+  padding: 16px;
+  border: 1px solid rgba(31, 36, 40, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 250, 241, 0.72);
+}
+
+.challenge-grid span {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+
+.challenge-grid strong {
+  display: block;
+  font-size: clamp(1.4rem, 3vw, 2.4rem);
+  line-height: 1.1;
+}
+
+.challenge-task {
+  margin-bottom: 0;
+  color: #3e4e54;
+  font-size: 1.1rem;
+  line-height: 1.8;
+}
+
+.challenge-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.challenge-button {
+  background: linear-gradient(135deg, var(--violet), var(--teal));
+}
+
+.challenge-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.52;
+  transform: none;
+}
+
 .card-aura {
   position: absolute;
   inset: auto -18% 12% auto;
@@ -389,6 +479,10 @@ h1,
 
   .skill-card-option {
     min-height: 320px;
+  }
+
+  .challenge-grid {
+    grid-template-columns: 1fr;
   }
 
   .modal-panel {
