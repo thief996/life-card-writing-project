@@ -67,6 +67,10 @@ body.modal-open {
   border-bottom: 1px solid rgba(216, 167, 70, 0.42);
 }
 
+.skill-panel {
+  grid-template-columns: minmax(0, 0.72fr) minmax(560px, 1fr);
+}
+
 .draw-copy {
   max-width: 620px;
 }
@@ -197,6 +201,32 @@ h1,
   background:
     linear-gradient(160deg, rgba(255, 253, 245, 0.82), rgba(223, 234, 240, 0.94)),
     url("06_素材庫/正式輸出/成就卡001_終於按下開始的人.png") center / cover;
+}
+
+.skill-results {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.skill-card-option {
+  min-height: 360px;
+  padding: 18px;
+}
+
+.skill-card-option .view-hint {
+  top: 14px;
+  right: 14px;
+  font-size: 0.74rem;
+}
+
+.skill-card-option h2 {
+  font-size: 1.35rem;
+  line-height: 1.18;
+}
+
+.skill-card-option p:last-child {
+  font-size: 0.92rem;
 }
 
 .card-aura {
@@ -340,6 +370,10 @@ h1,
     padding: 28px 0;
   }
 
+  .skill-panel {
+    grid-template-columns: 1fr;
+  }
+
   h1,
   .skill-panel h2 {
     font-size: 3.4rem;
@@ -347,6 +381,14 @@ h1,
 
   .result-card {
     min-height: 340px;
+  }
+
+  .skill-results {
+    grid-template-columns: 1fr;
+  }
+
+  .skill-card-option {
+    min-height: 320px;
   }
 
   .modal-panel {

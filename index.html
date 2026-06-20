@@ -43,13 +43,31 @@
           </div>
         </div>
 
-        <article class="result-card skill-card" data-result-card="skill" aria-live="polite" role="button" tabindex="0" aria-label="開啟技能卡完整圖">
-          <div class="card-aura"></div>
-          <span class="view-hint">查看完整牌卡</span>
-          <p class="card-type">技能卡</p>
-          <h2 data-card-name="skill">今天的技能尚未解鎖</h2>
-          <p data-card-message="skill">按下抽技能卡，取得一個今天可以立刻使用的小招式。</p>
-        </article>
+        <div class="skill-results" aria-live="polite">
+          <article class="result-card skill-card skill-card-option" data-result-card="skill" data-card-index="0" role="button" tabindex="0" aria-label="開啟第一張技能卡完整圖">
+            <div class="card-aura"></div>
+            <span class="view-hint">查看完整牌卡</span>
+            <p class="card-type">技能卡</p>
+            <h2 data-card-name="skill-0">技能一尚未解鎖</h2>
+            <p data-card-message="skill-0">按下抽技能卡，取得第一個今天可以使用的小招式。</p>
+          </article>
+
+          <article class="result-card skill-card skill-card-option" data-result-card="skill" data-card-index="1" role="button" tabindex="0" aria-label="開啟第二張技能卡完整圖">
+            <div class="card-aura"></div>
+            <span class="view-hint">查看完整牌卡</span>
+            <p class="card-type">技能卡</p>
+            <h2 data-card-name="skill-1">技能二尚未解鎖</h2>
+            <p data-card-message="skill-1">按下抽技能卡，取得第二個今天可以使用的小招式。</p>
+          </article>
+
+          <article class="result-card skill-card skill-card-option" data-result-card="skill" data-card-index="2" role="button" tabindex="0" aria-label="開啟第三張技能卡完整圖">
+            <div class="card-aura"></div>
+            <span class="view-hint">查看完整牌卡</span>
+            <p class="card-type">技能卡</p>
+            <h2 data-card-name="skill-2">技能三尚未解鎖</h2>
+            <p data-card-message="skill-2">按下抽技能卡，取得第三個今天可以使用的小招式。</p>
+          </article>
+        </div>
       </section>
     </main>
 
@@ -66,6 +84,6 @@
       </section>
     </div>
 
-    <script src="scripts/draw.js?v=20260619-modal-v3"></script>
+    <script src="scripts/draw.js?v=20260620-three-skills-v4"></script>
   </body>
 </html>

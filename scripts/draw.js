@@ -37,10 +37,6 @@ const deckState = {
   ghost: { lastIndex: -1, drawCount: 0 },
   skill: { lastIndex: -1, drawCount: 0 },
 };
-const selectedCards = {
-  ghost: null,
-  skill: null,
-};
 const modal = document.querySelector("[data-card-modal]");
 const modalImage = document.querySelector("[data-modal-image]");
 const modalType = document.querySelector("[data-modal-type]");
@@ -59,23 +55,29 @@ function pickCard(deckName) {
   }
 
   state.lastIndex = nextIndex;
-  state.drawCount += 1;
 
   return deck[nextIndex];
 }
 
-function drawCard(deckName) {
-  const card = pickCard(deckName);
-  const label = deckName === "ghost" ? "鬼怪" : "技能";
-  const resultCard = document.querySelector(`[data-result-card="${deckName}"]`);
-  selectedCards[deckName] = card;
+function pickUniqueCards(deckName, count) {
+  const deck = [...decks[deckName]];
+  const picks = [];
+
+  while (deck.length > 0 && picks.length < count) {
+    const nextIndex = Math.floor(Math.random() * deck.length);
+    picks.push(deck.splice(nextIndex, 1)[0]);
+  }
+
+  return picks;
+}
+
+function renderCard(deckName, card, resultCard, targetKey) {
   resultCard.dataset.cardImage = card.image || "";
   resultCard.dataset.cardName = card.name;
   resultCard.dataset.cardMessage = card.message;
 
-  document.querySelector(`[data-card-name="${deckName}"]`).textContent = card.name;
-  document.querySelector(`[data-card-message="${deckName}"]`).textContent = card.message;
-  document.querySelector(`[data-draw-status="${deckName}"]`).textContent = `已抽 ${label} ${deckState[deckName].drawCount} 次`;
+  document.querySelector(`[data-card-name="${targetKey}"]`).textContent = card.name;
+  document.querySelector(`[data-card-message="${targetKey}"]`).textContent = card.message;
 
   if (card.image && resultCard) {
     const overlay =
@@ -86,16 +88,38 @@ function drawCard(deckName) {
   }
 }
 
+function drawCard(deckName) {
+  const label = deckName === "ghost" ? "鬼怪" : "技能";
+  deckState[deckName].drawCount += 1;
+
+  if (deckName === "skill") {
+    const cards = pickUniqueCards("skill", 3);
+
+    cards.forEach((card, index) => {
+      const resultCard = document.querySelector(`[data-result-card="skill"][data-card-index="${index}"]`);
+      renderCard("skill", card, resultCard, `skill-${index}`);
+    });
+
+    document.querySelector(`[data-draw-status="${deckName}"]`).textContent = `已抽 ${label} ${deckState[deckName].drawCount} 次`;
+    return;
+  }
+
+  const card = pickCard(deckName);
+  const resultCard = document.querySelector(`[data-result-card="${deckName}"]`);
+  renderCard(deckName, card, resultCard, deckName);
+  document.querySelector(`[data-draw-status="${deckName}"]`).textContent = `已抽 ${label} ${deckState[deckName].drawCount} 次`;
+}
+
 document.querySelectorAll("[data-draw-button]").forEach((button) => {
   button.addEventListener("click", () => drawCard(button.dataset.drawButton));
 });
 
-function openCardModal(deckName) {
-  const resultCard = document.querySelector(`[data-result-card="${deckName}"]`);
-  const card = selectedCards[deckName] || {
-    image: resultCard?.dataset.cardImage,
-    name: resultCard?.dataset.cardName,
-    message: resultCard?.dataset.cardMessage,
+function openCardModal(resultCard) {
+  const deckName = resultCard.dataset.resultCard;
+  const card = {
+    image: resultCard.dataset.cardImage,
+    name: resultCard.dataset.cardName,
+    message: resultCard.dataset.cardMessage,
   };
 
   if (!card || !card.image) {
@@ -118,13 +142,11 @@ function closeCardModal() {
 }
 
 document.querySelectorAll("[data-result-card]").forEach((cardElement) => {
-  const deckName = cardElement.dataset.resultCard;
-
-  cardElement.addEventListener("click", () => openCardModal(deckName));
+  cardElement.addEventListener("click", () => openCardModal(cardElement));
   cardElement.addEventListener("keydown", (event) => {
     if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
-      openCardModal(deckName);
+      openCardModal(cardElement);
     }
   });
 });
