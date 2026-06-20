@@ -3,15 +3,15 @@ const decks = {
     {
       name: "拖延幽影",
       image: "",
-      message: "今天的怪會把事情變得很大。先做最小的一步，讓它失去霧氣。",
+      message: "牠會把普通任務膨脹成巨大工程，讓你越看越累，最後連開始都覺得太重。",
     },
     {
       name: "比較魔王",
-      message: "它會拿別人的進度嚇你。回到自己的地圖，先完成你手上的一格。",
+      message: "它會把別人的進度貼到你眼前，讓你覺得自己永遠落後，連原本的步伐都亂掉。",
     },
     {
       name: "完美主義石像",
-      message: "它會要求你一次做到最好。今天的破解法是先交出粗糙版本。",
+      message: "它會要求你一次做到最好，讓任何不夠完整的開始都像失敗。",
     },
   ],
   skill: [
@@ -324,7 +324,50 @@ function wrapCanvasText(context, text, x, y, maxWidth, lineHeight) {
   return currentY + lineHeight;
 }
 
-function downloadChallengeCard() {
+function loadCanvasImage(src) {
+  return new Promise((resolve, reject) => {
+    if (!src) {
+      reject(new Error("missing image source"));
+      return;
+    }
+
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = reject;
+    image.src = src;
+  });
+}
+
+function drawContainedImage(context, image, x, y, width, height) {
+  context.fillStyle = "rgba(255, 253, 245, 0.88)";
+  context.fillRect(x, y, width, height);
+
+  if (!image) {
+    return;
+  }
+
+  const imageRatio = image.width / image.height;
+  const boxRatio = width / height;
+  let drawWidth = width;
+  let drawHeight = height;
+  let drawX = x;
+  let drawY = y;
+
+  if (imageRatio > boxRatio) {
+    drawHeight = width / imageRatio;
+    drawY = y + (height - drawHeight) / 2;
+  } else {
+    drawWidth = height * imageRatio;
+    drawX = x + (width - drawWidth) / 2;
+  }
+
+  context.drawImage(image, drawX, drawY, drawWidth, drawHeight);
+  context.strokeStyle = "rgba(216, 167, 70, 0.64)";
+  context.lineWidth = 4;
+  context.strokeRect(x, y, width, height);
+}
+
+async function downloadChallengeCard() {
   if (!challengeState.ghost || !challengeState.skill) {
     return;
   }
@@ -356,65 +399,68 @@ function downloadChallengeCard() {
   context.strokeRect(58, 58, 964, 1234);
 
   context.fillStyle = "#2d3f46";
-  context.font = "900 76px Microsoft JhengHei, sans-serif";
-  context.fillText("今日挑戰", 92, 170);
+  context.font = "900 64px Microsoft JhengHei, sans-serif";
+  context.fillText("今日挑戰", 92, 145);
 
   context.fillStyle = "#1f6f78";
-  context.font = "800 34px Microsoft JhengHei, sans-serif";
-  context.fillText(challengeDate.textContent, 96, 230);
+  context.font = "800 30px Microsoft JhengHei, sans-serif";
+  context.fillText(challengeDate.textContent, 96, 194);
 
-  context.fillStyle = "rgba(255, 253, 245, 0.82)";
-  context.fillRect(92, 300, 896, 270);
-  context.fillRect(92, 620, 896, 270);
+  const [ghostImage, skillImage] = await Promise.all([
+    loadCanvasImage(challengeState.ghost.image).catch(() => null),
+    loadCanvasImage(challengeState.skill.image).catch(() => null),
+  ]);
+
+  drawContainedImage(context, ghostImage, 92, 235, 405, 560);
+  drawContainedImage(context, skillImage, 583, 235, 405, 560);
+
+  context.fillStyle = "rgba(255, 253, 245, 0.9)";
+  context.fillRect(92, 835, 896, 132);
 
   context.fillStyle = "#a94f4f";
-  context.font = "900 34px Microsoft JhengHei, sans-serif";
-  context.fillText("面對的鬼怪", 132, 360);
+  context.font = "900 26px Microsoft JhengHei, sans-serif";
+  context.fillText("面對的鬼怪", 124, 880);
   context.fillStyle = "#2d3f46";
-  context.font = "900 62px Microsoft JhengHei, sans-serif";
-  context.fillText(challengeState.ghost.name, 132, 440);
-  context.font = "400 32px Microsoft JhengHei, sans-serif";
-  wrapCanvasText(context, challengeState.ghost.message, 132, 505, 820, 44);
+  context.font = "900 42px Microsoft JhengHei, sans-serif";
+  context.fillText(challengeState.ghost.name, 124, 932);
 
   context.fillStyle = "#1f6f78";
-  context.font = "900 34px Microsoft JhengHei, sans-serif";
-  context.fillText("選擇的技能", 132, 680);
+  context.font = "900 26px Microsoft JhengHei, sans-serif";
+  context.fillText("選擇的技能", 566, 880);
   context.fillStyle = "#2d3f46";
-  context.font = "900 62px Microsoft JhengHei, sans-serif";
-  context.fillText(challengeState.skill.name, 132, 760);
-  context.font = "400 32px Microsoft JhengHei, sans-serif";
-  wrapCanvasText(context, challengeState.skill.message, 132, 825, 820, 44);
+  context.font = "900 42px Microsoft JhengHei, sans-serif";
+  context.fillText(challengeState.skill.name, 566, 932);
 
   context.fillStyle = "#2d3f46";
-  context.font = "900 38px Microsoft JhengHei, sans-serif";
-  context.fillText("今日任務", 96, 990);
-  context.font = "400 34px Microsoft JhengHei, sans-serif";
-  let nextY = wrapCanvasText(context, challengeTask.textContent, 96, 1050, 888, 50);
+  context.font = "900 32px Microsoft JhengHei, sans-serif";
+  context.fillText("今日任務", 96, 1028);
+  context.font = "400 27px Microsoft JhengHei, sans-serif";
+  let nextY = wrapCanvasText(context, challengeTask.textContent, 96, 1072, 888, 40);
 
   context.fillStyle = "#1f6f78";
-  context.font = "900 30px Microsoft JhengHei, sans-serif";
-  context.fillText("任務選項", 96, nextY + 18);
+  context.font = "900 26px Microsoft JhengHei, sans-serif";
+  context.fillText("任務選項", 96, nextY + 12);
   context.fillStyle = "#2d3f46";
-  context.font = "400 28px Microsoft JhengHei, sans-serif";
-  nextY += 64;
+  context.font = "400 24px Microsoft JhengHei, sans-serif";
+  nextY += 46;
   (challengeState.skill.actions || []).slice(0, 3).forEach((action, index) => {
-    nextY = wrapCanvasText(context, `${index + 1}. ${action}`, 112, nextY, 840, 38);
+    nextY = wrapCanvasText(context, `${index + 1}. ${action}`, 112, nextY, 840, 32);
   });
 
   if (challengeState.skill.drops?.length) {
     context.fillStyle = "#1f6f78";
-    context.font = "900 28px Microsoft JhengHei, sans-serif";
+    context.font = "900 24px Microsoft JhengHei, sans-serif";
     context.fillText(`可能掉落：${challengeState.skill.drops.join(" / ")}`, 96, nextY + 24);
-    nextY += 62;
+    nextY += 54;
   }
 
   if (challengeState.ghost.gmNote) {
     context.fillStyle = "#a94f4f";
-    context.font = "900 28px Microsoft JhengHei, sans-serif";
+    context.font = "900 24px Microsoft JhengHei, sans-serif";
     context.fillText("GM備註", 96, nextY + 16);
     context.fillStyle = "#2d3f46";
-    context.font = "400 27px Microsoft JhengHei, sans-serif";
-    wrapCanvasText(context, challengeState.ghost.gmNote, 96, nextY + 56, 888, 38);
+    context.font = "400 23px Microsoft JhengHei, sans-serif";
+    wrapCanvasText(context, challengeState.ghost.gmNote, 96, nextY + 50, 888, 31);
   }
 
   context.fillStyle = "rgba(45, 63, 70, 0.5)";
