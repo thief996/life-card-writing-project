@@ -477,6 +477,7 @@ p {
 
 .feedback-form input[type="text"],
 .feedback-form input[type="number"],
+.feedback-form select,
 .feedback-form textarea {
   width: 100%;
   min-height: 42px;

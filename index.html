@@ -128,15 +128,12 @@
         </div>
 
         <form class="feedback-form" data-feedback-form>
-          <fieldset>
-            <legend>1. 最有感的鬼怪是？</legend>
-            <label><input type="checkbox" name="ghost" value="拖延史萊姆" /> 拖延史萊姆</label>
-            <label><input type="checkbox" name="ghost" value="焦慮人面魚" /> 焦慮人面魚</label>
-            <label><input type="checkbox" name="ghost" value="討好紅衣小女孩" /> 討好紅衣小女孩</label>
-            <label><input type="checkbox" name="ghost" value="過年長舌鬼" /> 過年長舌鬼</label>
-            <label><input type="checkbox" name="ghost" value="負債幼龍" /> 負債幼龍</label>
-            <label class="wide-field">其他：<input type="text" name="ghostOther" /></label>
-          </fieldset>
+          <label class="text-field">
+            <span>1. 最有感的鬼怪是？</span>
+            <select name="ghost" data-feedback-ghost-select>
+              <option value="">請選擇一隻鬼怪</option>
+            </select>
+          </label>
 
           <label class="text-field">
             <span>2. 最喜歡的技能是？</span>

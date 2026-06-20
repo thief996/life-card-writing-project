@@ -60,6 +60,7 @@ const challengeGm = document.querySelector("[data-challenge-gm]");
 const challengeStatus = document.querySelector("[data-challenge-status]");
 const challengeDownload = document.querySelector("[data-download-challenge]");
 const feedbackForm = document.querySelector("[data-feedback-form]");
+const feedbackGhostSelect = document.querySelector("[data-feedback-ghost-select]");
 const feedbackStatus = document.querySelector("[data-feedback-status]");
 const challengeState = {
   ghost: null,
@@ -105,6 +106,31 @@ function renderTextList(listElement, items, ordered = false) {
     listItem.textContent = ordered ? item : item;
     listElement.appendChild(listItem);
   });
+}
+
+function updateFeedbackGhostOptions() {
+  if (!feedbackGhostSelect) {
+    return;
+  }
+
+  const selectedValue = feedbackGhostSelect.value;
+  feedbackGhostSelect.replaceChildren();
+
+  const placeholder = document.createElement("option");
+  placeholder.value = "";
+  placeholder.textContent = "請選擇一隻鬼怪";
+  feedbackGhostSelect.appendChild(placeholder);
+
+  decks.ghost.forEach((ghost) => {
+    const option = document.createElement("option");
+    option.value = ghost.name;
+    option.textContent = ghost.name;
+    feedbackGhostSelect.appendChild(option);
+  });
+
+  if ([...feedbackGhostSelect.options].some((option) => option.value === selectedValue)) {
+    feedbackGhostSelect.value = selectedValue;
+  }
 }
 
 function pickCard(deckName) {
@@ -473,10 +499,6 @@ async function downloadChallengeCard() {
 challengeDownload.addEventListener("click", downloadChallengeCard);
 updateChallenge();
 
-function getFormValuesByName(formData, name) {
-  return formData.getAll(name).filter(Boolean).join("、") || "未填";
-}
-
 function buildFeedbackText() {
   const formData = new FormData(feedbackForm);
   const date = new Date().toLocaleString("zh-Hant-TW");
@@ -489,8 +511,7 @@ function buildFeedbackText() {
     `今日鬼怪：${currentGhost}`,
     `今日技能：${currentSkill}`,
     "",
-    `1. 最有感的鬼怪：${getFormValuesByName(formData, "ghost")}`,
-    `其他鬼怪：${formData.get("ghostOther") || "未填"}`,
+    `1. 最有感的鬼怪：${formData.get("ghost") || "未填"}`,
     `2. 最喜歡的技能：${formData.get("favoriteSkill") || "未填"}`,
     `3. 看到鬼怪時的感覺：${formData.get("ghostFeeling") || "未填"}`,
     `4. 今日任務容易完成嗎：${formData.get("taskDifficulty") || "未填"}`,
@@ -530,12 +551,14 @@ document.querySelector("[data-copy-feedback]").addEventListener("click", async (
 });
 
 document.querySelector("[data-download-feedback]").addEventListener("click", downloadFeedbackText);
+updateFeedbackGhostOptions();
 
 fetch(`09_抽牌網站/card-pools/manifest.json?v=${Date.now()}`, { cache: "no-store" })
   .then((response) => response.json())
   .then((manifest) => {
     if (Array.isArray(manifest.ghost) && manifest.ghost.length > 0) {
       decks.ghost = manifest.ghost;
+      updateFeedbackGhostOptions();
     }
 
     if (Array.isArray(manifest.skill) && manifest.skill.length > 0) {
