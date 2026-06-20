@@ -367,6 +367,21 @@ function drawContainedImage(context, image, x, y, width, height) {
   context.strokeRect(x, y, width, height);
 }
 
+function drawRoundedPanel(context, x, y, width, height, radius = 0) {
+  context.beginPath();
+  context.moveTo(x + radius, y);
+  context.lineTo(x + width - radius, y);
+  context.quadraticCurveTo(x + width, y, x + width, y + radius);
+  context.lineTo(x + width, y + height - radius);
+  context.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+  context.lineTo(x + radius, y + height);
+  context.quadraticCurveTo(x, y + height, x, y + height - radius);
+  context.lineTo(x, y + radius);
+  context.quadraticCurveTo(x, y, x + radius, y);
+  context.closePath();
+  context.fill();
+}
+
 async function downloadChallengeCard() {
   if (!challengeState.ghost || !challengeState.skill) {
     return;
@@ -396,76 +411,57 @@ async function downloadChallengeCard() {
 
   context.strokeStyle = "rgba(216, 167, 70, 0.72)";
   context.lineWidth = 8;
-  context.strokeRect(58, 58, 964, 1234);
+  context.strokeRect(44, 44, 992, 1262);
 
   context.fillStyle = "#2d3f46";
-  context.font = "900 64px Microsoft JhengHei, sans-serif";
-  context.fillText("今日挑戰", 92, 145);
+  context.font = "900 58px Microsoft JhengHei, sans-serif";
+  context.fillText("今日挑戰", 76, 130);
 
   context.fillStyle = "#1f6f78";
-  context.font = "800 30px Microsoft JhengHei, sans-serif";
-  context.fillText(challengeDate.textContent, 96, 194);
+  context.font = "800 28px Microsoft JhengHei, sans-serif";
+  context.fillText(challengeDate.textContent, 80, 178);
 
   const [ghostImage, skillImage] = await Promise.all([
     loadCanvasImage(challengeState.ghost.image).catch(() => null),
     loadCanvasImage(challengeState.skill.image).catch(() => null),
   ]);
 
-  drawContainedImage(context, ghostImage, 92, 235, 405, 560);
-  drawContainedImage(context, skillImage, 583, 235, 405, 560);
+  drawContainedImage(context, ghostImage, 64, 218, 460, 636);
+  drawContainedImage(context, skillImage, 556, 218, 460, 636);
 
-  context.fillStyle = "rgba(255, 253, 245, 0.9)";
-  context.fillRect(92, 835, 896, 132);
+  context.fillStyle = "rgba(255, 253, 245, 0.92)";
+  drawRoundedPanel(context, 64, 884, 952, 126, 0);
 
   context.fillStyle = "#a94f4f";
   context.font = "900 26px Microsoft JhengHei, sans-serif";
-  context.fillText("面對的鬼怪", 124, 880);
+  context.fillText("面對的鬼怪", 98, 928);
   context.fillStyle = "#2d3f46";
-  context.font = "900 42px Microsoft JhengHei, sans-serif";
-  context.fillText(challengeState.ghost.name, 124, 932);
+  context.font = "900 40px Microsoft JhengHei, sans-serif";
+  context.fillText(challengeState.ghost.name, 98, 978);
 
   context.fillStyle = "#1f6f78";
   context.font = "900 26px Microsoft JhengHei, sans-serif";
-  context.fillText("選擇的技能", 566, 880);
+  context.fillText("選擇的技能", 566, 928);
   context.fillStyle = "#2d3f46";
-  context.font = "900 42px Microsoft JhengHei, sans-serif";
-  context.fillText(challengeState.skill.name, 566, 932);
+  context.font = "900 40px Microsoft JhengHei, sans-serif";
+  context.fillText(challengeState.skill.name, 566, 978);
+
+  context.fillStyle = "rgba(255, 253, 245, 0.72)";
+  drawRoundedPanel(context, 64, 1042, 952, 176, 0);
 
   context.fillStyle = "#2d3f46";
-  context.font = "900 32px Microsoft JhengHei, sans-serif";
-  context.fillText("今日任務", 96, 1028);
-  context.font = "400 27px Microsoft JhengHei, sans-serif";
-  let nextY = wrapCanvasText(context, challengeTask.textContent, 96, 1072, 888, 40);
-
-  context.fillStyle = "#1f6f78";
-  context.font = "900 26px Microsoft JhengHei, sans-serif";
-  context.fillText("任務選項", 96, nextY + 12);
-  context.fillStyle = "#2d3f46";
-  context.font = "400 24px Microsoft JhengHei, sans-serif";
-  nextY += 46;
+  context.font = "900 30px Microsoft JhengHei, sans-serif";
+  context.fillText("今日任務選項", 96, 1094);
+  context.fillStyle = "#3e4e54";
+  context.font = "400 26px Microsoft JhengHei, sans-serif";
+  let nextY = 1140;
   (challengeState.skill.actions || []).slice(0, 3).forEach((action, index) => {
-    nextY = wrapCanvasText(context, `${index + 1}. ${action}`, 112, nextY, 840, 32);
+    nextY = wrapCanvasText(context, `${index + 1}. ${action}`, 112, nextY, 824, 34);
   });
 
-  if (challengeState.skill.drops?.length) {
-    context.fillStyle = "#1f6f78";
-    context.font = "900 24px Microsoft JhengHei, sans-serif";
-    context.fillText(`可能掉落：${challengeState.skill.drops.join(" / ")}`, 96, nextY + 24);
-    nextY += 54;
-  }
-
-  if (challengeState.ghost.gmNote) {
-    context.fillStyle = "#a94f4f";
-    context.font = "900 24px Microsoft JhengHei, sans-serif";
-    context.fillText("GM備註", 96, nextY + 16);
-    context.fillStyle = "#2d3f46";
-    context.font = "400 23px Microsoft JhengHei, sans-serif";
-    wrapCanvasText(context, challengeState.ghost.gmNote, 96, nextY + 50, 888, 31);
-  }
-
   context.fillStyle = "rgba(45, 63, 70, 0.5)";
-  context.font = "700 28px Microsoft JhengHei, sans-serif";
-  context.fillText("人生打怪圖鑑", 96, 1238);
+  context.font = "700 26px Microsoft JhengHei, sans-serif";
+  context.fillText("人生打怪圖鑑", 76, 1266);
 
   const link = document.createElement("a");
   link.download = `今日挑戰_${challengeState.ghost.name}_${challengeState.skill.name}.png`;
