@@ -12,10 +12,16 @@
     <header class="title-art" role="img" aria-label="人生打怪圖鑑彩色水墨風格抬頭圖"></header>
 
     <main class="app-shell">
+      <section class="quest-brief" aria-labelledby="quest-brief-title">
+        <p class="eyebrow">Alpha 0.3</p>
+        <h1 id="quest-brief-title">今日副本</h1>
+        <p>抽出今天的鬼怪，從三張技能中選一張，接下一個能立刻開始的小任務。</p>
+      </section>
+
       <section class="draw-panel ghost-panel" aria-labelledby="ghost-title">
         <div class="draw-copy">
           <p class="eyebrow">Ghost Deck</p>
-          <h1 id="ghost-title">抽鬼怪</h1>
+          <h2 id="ghost-title">今天的鬼怪</h2>
           <p class="intro">抽出今天要面對的怪，先看見阻力，再決定怎麼破關。</p>
           <div class="draw-actions">
             <button class="draw-button ghost-button" type="button" data-draw-button="ghost">抽鬼怪卡</button>
@@ -35,7 +41,7 @@
       <section class="draw-panel skill-panel" aria-labelledby="skill-title">
         <div class="draw-copy">
           <p class="eyebrow">Skill Deck</p>
-          <h2 id="skill-title">抽技能</h2>
+          <h2 id="skill-title">今天的技能</h2>
           <p class="intro">抽出今天可使用的招式，讓你不是硬扛，而是帶著工具上場。</p>
           <div class="draw-actions">
             <button class="draw-button skill-button" type="button" data-draw-button="skill">抽技能卡</button>
@@ -73,7 +79,7 @@
       <section class="challenge-panel" aria-labelledby="challenge-title">
         <div class="section-heading">
           <p class="eyebrow">Today Quest</p>
-          <h2 id="challenge-title">今日挑戰</h2>
+          <h2 id="challenge-title">今日副本紀錄</h2>
         </div>
 
         <div class="challenge-card" data-challenge-card>
@@ -89,12 +95,96 @@
             </div>
           </div>
           <p class="challenge-task" data-challenge-task>抽出鬼怪與技能後，這裡會生成你的今日挑戰。</p>
+          <div class="challenge-detail-grid">
+            <div class="challenge-detail" data-challenge-actions hidden>
+              <h3>今日任務選項</h3>
+              <ol data-challenge-action-list></ol>
+            </div>
+            <div class="challenge-detail" data-challenge-drops hidden>
+              <h3>完成任務後可能獲得</h3>
+              <ul class="drop-list" data-challenge-drop-list></ul>
+            </div>
+          </div>
+          <blockquote class="gm-note" data-challenge-gm hidden></blockquote>
+          <div class="future-hooks" aria-label="未來預留系統">
+            <span>人格晶體</span>
+            <span>星圖</span>
+            <span>打怪紀錄</span>
+            <span>每日連續登入</span>
+          </div>
         </div>
 
         <div class="challenge-actions">
           <button class="draw-button challenge-button" type="button" data-download-challenge disabled>下載今日挑戰 PNG</button>
           <span class="draw-status" data-challenge-status>先抽鬼怪，再選技能</span>
         </div>
+      </section>
+
+      <section class="feedback-panel" aria-labelledby="feedback-title">
+        <div class="section-heading">
+          <p class="eyebrow">Feedback</p>
+          <h2 id="feedback-title">玩家回饋表</h2>
+          <p>人生打怪圖鑑 Alpha 測試。感謝你幫忙打怪。</p>
+        </div>
+
+        <form class="feedback-form" data-feedback-form>
+          <fieldset>
+            <legend>1. 最有感的鬼怪是？</legend>
+            <label><input type="checkbox" name="ghost" value="拖延史萊姆" /> 拖延史萊姆</label>
+            <label><input type="checkbox" name="ghost" value="焦慮人面魚" /> 焦慮人面魚</label>
+            <label><input type="checkbox" name="ghost" value="討好紅衣小女孩" /> 討好紅衣小女孩</label>
+            <label><input type="checkbox" name="ghost" value="過年長舌鬼" /> 過年長舌鬼</label>
+            <label><input type="checkbox" name="ghost" value="負債幼龍" /> 負債幼龍</label>
+            <label class="wide-field">其他：<input type="text" name="ghostOther" /></label>
+          </fieldset>
+
+          <label class="text-field">
+            <span>2. 最喜歡的技能是？</span>
+            <input type="text" name="favoriteSkill" />
+          </label>
+
+          <fieldset>
+            <legend>3. 看到鬼怪時的感覺？</legend>
+            <label><input type="radio" name="ghostFeeling" value="哈哈哈這就是我" /> 哈哈哈這就是我</label>
+            <label><input type="radio" name="ghostFeeling" value="有點被說中" /> 有點被說中</label>
+            <label><input type="radio" name="ghostFeeling" value="普通" /> 普通</label>
+            <label><input type="radio" name="ghostFeeling" value="沒感覺" /> 沒感覺</label>
+          </fieldset>
+
+          <fieldset>
+            <legend>4. 今日任務容易完成嗎？</legend>
+            <label><input type="radio" name="taskDifficulty" value="很容易" /> 很容易</label>
+            <label><input type="radio" name="taskDifficulty" value="還可以" /> 還可以</label>
+            <label><input type="radio" name="taskDifficulty" value="有點難" /> 有點難</label>
+            <label><input type="radio" name="taskDifficulty" value="太難" /> 太難</label>
+          </fieldset>
+
+          <label class="text-field">
+            <span>5. 哪裡最卡？</span>
+            <textarea name="stuckPoint" rows="3"></textarea>
+          </label>
+
+          <label class="text-field score-field">
+            <span>6. 如果推薦給朋友，你會打幾分？</span>
+            <input type="number" name="recommendScore" min="0" max="10" placeholder="0-10" />
+          </label>
+
+          <label class="text-field">
+            <span>7. 玩完後最想說的一句話</span>
+            <textarea name="oneLine" rows="3"></textarea>
+          </label>
+
+          <label class="text-field archaeologist-field">
+            <span>考古員專用：請記錄玩家原話</span>
+            <textarea name="rawQuote" rows="4" placeholder="例如：靠北，我就是這隻。"></textarea>
+          </label>
+
+          <div class="feedback-actions">
+            <button class="draw-button feedback-button" type="button" data-copy-feedback>複製回饋內容</button>
+            <button class="draw-button feedback-button secondary" type="button" data-download-feedback>下載回饋 TXT</button>
+            <span class="draw-status" data-feedback-status>回饋會留在你的裝置，不會自動送出。</span>
+          </div>
+        </form>
       </section>
     </main>
 
@@ -111,6 +201,6 @@
       </section>
     </div>
 
-    <script src="scripts/draw.js?v=20260620-challenge-v5"></script>
+    <script src="scripts/draw.js?v=20260620-alpha03-v6"></script>
   </body>
 </html>

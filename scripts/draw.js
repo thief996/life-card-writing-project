@@ -19,16 +19,22 @@ const decks = {
       name: "NPC召喚",
       image: "09_抽牌網站/card-pools/技能卡/NPC召喚.png",
       message: "今天不用單刷。召喚一位能給你資訊、陪伴或提醒的人。",
+      actions: ["傳訊息給一位信任的人", "問一個卡住已久的問題", "更新近況，讓對方知道你正在打這關"],
+      drops: ["求助", "陪伴", "勇氣"],
     },
     {
       name: "一步卷軸",
       image: "09_抽牌網站/card-pools/技能卡/一步卷軸.png",
       message: "不要解完整張地圖。打開卷軸，只執行下一步。",
+      actions: ["把今天最卡的事寫成一句話", "只圈出下一個 5 分鐘能做的動作", "完成後立刻停下來打勾"],
+      drops: ["啟動", "清晰", "行動感"],
     },
     {
       name: "微小任務術",
       image: "09_抽牌網站/card-pools/技能卡/微小任務術.png",
       message: "把任務縮到小到不能再小。完成它，讓行動感先回來。",
+      actions: ["把任務縮成一個可以立刻開始的版本", "只做第一個步驟", "做完後記下：我已經動了"],
+      drops: ["完成感", "節奏", "自信"],
     },
   ],
 };
@@ -46,12 +52,60 @@ const challengeDate = document.querySelector("[data-challenge-date]");
 const challengeGhost = document.querySelector("[data-challenge-ghost]");
 const challengeSkill = document.querySelector("[data-challenge-skill]");
 const challengeTask = document.querySelector("[data-challenge-task]");
+const challengeActions = document.querySelector("[data-challenge-actions]");
+const challengeActionList = document.querySelector("[data-challenge-action-list]");
+const challengeDrops = document.querySelector("[data-challenge-drops]");
+const challengeDropList = document.querySelector("[data-challenge-drop-list]");
+const challengeGm = document.querySelector("[data-challenge-gm]");
 const challengeStatus = document.querySelector("[data-challenge-status]");
 const challengeDownload = document.querySelector("[data-download-challenge]");
+const feedbackForm = document.querySelector("[data-feedback-form]");
+const feedbackStatus = document.querySelector("[data-feedback-status]");
 const challengeState = {
   ghost: null,
   skill: null,
 };
+
+const metricsKey = "lifeQuestAlpha03Metrics";
+
+function readMetrics() {
+  try {
+    return JSON.parse(localStorage.getItem(metricsKey)) || {};
+  } catch {
+    return {};
+  }
+}
+
+function writeMetric(type, name) {
+  try {
+    const metrics = readMetrics();
+    metrics[type] = metrics[type] || {};
+    const key = name || "unknown";
+    metrics[type][key] = (metrics[type][key] || 0) + 1;
+    metrics.lastPlayedAt = new Date().toISOString();
+    localStorage.setItem(metricsKey, JSON.stringify(metrics));
+  } catch {
+    // Metrics are helpful for Alpha testing, but gameplay should never depend on localStorage.
+  }
+}
+
+function readJsonDataset(value, fallback = []) {
+  try {
+    const parsed = JSON.parse(value || "[]");
+    return Array.isArray(parsed) ? parsed : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function renderTextList(listElement, items, ordered = false) {
+  listElement.replaceChildren();
+  items.forEach((item, index) => {
+    const listItem = document.createElement("li");
+    listItem.textContent = ordered ? item : item;
+    listElement.appendChild(listItem);
+  });
+}
 
 function pickCard(deckName) {
   const deck = decks[deckName];
@@ -85,6 +139,9 @@ function renderCard(deckName, card, resultCard, targetKey) {
   resultCard.dataset.cardImage = card.image || "";
   resultCard.dataset.cardName = card.name;
   resultCard.dataset.cardMessage = card.message;
+  resultCard.dataset.cardActions = JSON.stringify(card.actions || []);
+  resultCard.dataset.cardDrops = JSON.stringify(card.drops || []);
+  resultCard.dataset.cardGmNote = card.gmNote || "";
 
   document.querySelector(`[data-card-name="${targetKey}"]`).textContent = card.name;
   document.querySelector(`[data-card-message="${targetKey}"]`).textContent = card.message;
@@ -111,13 +168,28 @@ function updateChallenge() {
   challengeSkill.textContent = challengeState.skill?.name || "請從三張技能卡選一張";
 
   if (challengeState.ghost && challengeState.skill) {
-    challengeTask.textContent = `今日挑戰：面對「${challengeState.ghost.name}」，請使用「${challengeState.skill.name}」。先做一個 10 分鐘內能完成的小行動，讓今天的關卡開始鬆動。`;
+    const actions = challengeState.skill.actions || [];
+    const drops = challengeState.skill.drops || [];
+
+    challengeTask.textContent = `今日副本：面對「${challengeState.ghost.name}」，請使用「${challengeState.skill.name}」。從下方任務選一項完成，讓今天的關卡開始鬆動。`;
+    renderTextList(challengeActionList, actions, true);
+    challengeActions.hidden = actions.length === 0;
+    renderTextList(challengeDropList, drops);
+    challengeDrops.hidden = drops.length === 0;
+    challengeGm.textContent = challengeState.ghost.gmNote ? `GM備註：${challengeState.ghost.gmNote}` : "";
+    challengeGm.hidden = !challengeState.ghost.gmNote;
     challengeStatus.textContent = "今日挑戰已生成";
     challengeDownload.disabled = false;
     return;
   }
 
   challengeTask.textContent = "抽出鬼怪與技能後，這裡會生成你的今日挑戰。";
+  challengeActions.hidden = true;
+  challengeDrops.hidden = true;
+  challengeGm.hidden = true;
+  challengeActionList.replaceChildren();
+  challengeDropList.replaceChildren();
+  challengeGm.textContent = "";
   challengeStatus.textContent = challengeState.ghost ? "請從三張技能卡選一張" : "先抽鬼怪，再選技能";
   challengeDownload.disabled = true;
 }
@@ -148,6 +220,7 @@ function drawCard(deckName) {
   const resultCard = document.querySelector(`[data-result-card="${deckName}"]`);
   renderCard(deckName, card, resultCard, deckName);
   challengeState.ghost = card;
+  writeMetric("ghostDraws", card.name);
   document.querySelector(`[data-draw-status="${deckName}"]`).textContent = `已抽 ${label} ${deckState[deckName].drawCount} 次`;
   updateChallenge();
 }
@@ -162,6 +235,9 @@ function openCardModal(resultCard) {
     image: resultCard.dataset.cardImage,
     name: resultCard.dataset.cardName,
     message: resultCard.dataset.cardMessage,
+    actions: readJsonDataset(resultCard.dataset.cardActions),
+    drops: readJsonDataset(resultCard.dataset.cardDrops),
+    gmNote: resultCard.dataset.cardGmNote,
   };
 
   if (!card || !card.image) {
@@ -197,7 +273,10 @@ function selectSkillCard(cardElement) {
     image: cardElement.dataset.cardImage,
     name: cardElement.dataset.cardName,
     message: cardElement.dataset.cardMessage,
+    actions: readJsonDataset(cardElement.dataset.cardActions),
+    drops: readJsonDataset(cardElement.dataset.cardDrops),
   };
+  writeMetric("skillSelections", challengeState.skill.name);
   updateChallenge();
 }
 
@@ -310,7 +389,33 @@ function downloadChallengeCard() {
   context.font = "900 38px Microsoft JhengHei, sans-serif";
   context.fillText("今日任務", 96, 990);
   context.font = "400 34px Microsoft JhengHei, sans-serif";
-  wrapCanvasText(context, challengeTask.textContent, 96, 1050, 888, 50);
+  let nextY = wrapCanvasText(context, challengeTask.textContent, 96, 1050, 888, 50);
+
+  context.fillStyle = "#1f6f78";
+  context.font = "900 30px Microsoft JhengHei, sans-serif";
+  context.fillText("任務選項", 96, nextY + 18);
+  context.fillStyle = "#2d3f46";
+  context.font = "400 28px Microsoft JhengHei, sans-serif";
+  nextY += 64;
+  (challengeState.skill.actions || []).slice(0, 3).forEach((action, index) => {
+    nextY = wrapCanvasText(context, `${index + 1}. ${action}`, 112, nextY, 840, 38);
+  });
+
+  if (challengeState.skill.drops?.length) {
+    context.fillStyle = "#1f6f78";
+    context.font = "900 28px Microsoft JhengHei, sans-serif";
+    context.fillText(`可能掉落：${challengeState.skill.drops.join(" / ")}`, 96, nextY + 24);
+    nextY += 62;
+  }
+
+  if (challengeState.ghost.gmNote) {
+    context.fillStyle = "#a94f4f";
+    context.font = "900 28px Microsoft JhengHei, sans-serif";
+    context.fillText("GM備註", 96, nextY + 16);
+    context.fillStyle = "#2d3f46";
+    context.font = "400 27px Microsoft JhengHei, sans-serif";
+    wrapCanvasText(context, challengeState.ghost.gmNote, 96, nextY + 56, 888, 38);
+  }
 
   context.fillStyle = "rgba(45, 63, 70, 0.5)";
   context.font = "700 28px Microsoft JhengHei, sans-serif";
@@ -320,10 +425,69 @@ function downloadChallengeCard() {
   link.download = `今日挑戰_${challengeState.ghost.name}_${challengeState.skill.name}.png`;
   link.href = canvas.toDataURL("image/png");
   link.click();
+  writeMetric("challengeDownloads", `${challengeState.ghost.name} + ${challengeState.skill.name}`);
 }
 
 challengeDownload.addEventListener("click", downloadChallengeCard);
 updateChallenge();
+
+function getFormValuesByName(formData, name) {
+  return formData.getAll(name).filter(Boolean).join("、") || "未填";
+}
+
+function buildFeedbackText() {
+  const formData = new FormData(feedbackForm);
+  const date = new Date().toLocaleString("zh-Hant-TW");
+  const currentGhost = challengeState.ghost?.name || "尚未抽鬼怪";
+  const currentSkill = challengeState.skill?.name || "尚未選技能";
+
+  return [
+    "人生打怪圖鑑 Alpha 測試回饋",
+    `填寫時間：${date}`,
+    `今日鬼怪：${currentGhost}`,
+    `今日技能：${currentSkill}`,
+    "",
+    `1. 最有感的鬼怪：${getFormValuesByName(formData, "ghost")}`,
+    `其他鬼怪：${formData.get("ghostOther") || "未填"}`,
+    `2. 最喜歡的技能：${formData.get("favoriteSkill") || "未填"}`,
+    `3. 看到鬼怪時的感覺：${formData.get("ghostFeeling") || "未填"}`,
+    `4. 今日任務容易完成嗎：${formData.get("taskDifficulty") || "未填"}`,
+    `5. 哪裡最卡：${formData.get("stuckPoint") || "未填"}`,
+    `6. 推薦分數：${formData.get("recommendScore") || "未填"}`,
+    `7. 玩完後最想說的一句話：${formData.get("oneLine") || "未填"}`,
+    "",
+    `考古員原話：${formData.get("rawQuote") || "未填"}`,
+  ].join("\n");
+}
+
+function setFeedbackStatus(message) {
+  feedbackStatus.textContent = message;
+}
+
+function downloadFeedbackText() {
+  const blob = new Blob([buildFeedbackText()], { type: "text/plain;charset=utf-8" });
+  const link = document.createElement("a");
+  link.download = `人生打怪圖鑑_Alpha回饋_${Date.now()}.txt`;
+  link.href = URL.createObjectURL(blob);
+  link.click();
+  URL.revokeObjectURL(link.href);
+  writeMetric("feedbackDownloads", "txt");
+  setFeedbackStatus("已下載回饋 TXT");
+}
+
+document.querySelector("[data-copy-feedback]").addEventListener("click", async () => {
+  const feedbackText = buildFeedbackText();
+
+  try {
+    await navigator.clipboard.writeText(feedbackText);
+    writeMetric("feedbackCopies", "clipboard");
+    setFeedbackStatus("已複製回饋內容");
+  } catch {
+    downloadFeedbackText();
+  }
+});
+
+document.querySelector("[data-download-feedback]").addEventListener("click", downloadFeedbackText);
 
 fetch(`09_抽牌網站/card-pools/manifest.json?v=${Date.now()}`, { cache: "no-store" })
   .then((response) => response.json())

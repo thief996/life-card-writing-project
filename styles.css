@@ -42,6 +42,23 @@ body.modal-open {
   padding: 28px 0;
 }
 
+.quest-brief {
+  padding: 24px 0 8px;
+}
+
+.quest-brief h1 {
+  margin-bottom: 12px;
+  font-size: clamp(3rem, 7vw, 5.8rem);
+  line-height: 0.98;
+}
+
+.quest-brief p:last-child {
+  max-width: 720px;
+  color: var(--muted);
+  font-size: 1.12rem;
+  line-height: 1.8;
+}
+
 .title-art {
   width: min(1180px, calc(100% - 32px));
   height: clamp(220px, 36vw, 470px);
@@ -94,8 +111,7 @@ p {
   margin-top: 0;
 }
 
-h1,
-.skill-panel h2 {
+.draw-panel h2 {
   margin-bottom: 14px;
   font-size: clamp(3rem, 8vw, 6.3rem);
   line-height: 0.95;
@@ -295,10 +311,88 @@ h1,
 }
 
 .challenge-task {
-  margin-bottom: 0;
+  margin-bottom: 18px;
   color: #3e4e54;
   font-size: 1.1rem;
   line-height: 1.8;
+}
+
+.challenge-detail-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(240px, 0.8fr);
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.challenge-detail {
+  padding: 18px;
+  border: 1px solid rgba(31, 36, 40, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 250, 241, 0.72);
+}
+
+.challenge-detail[hidden],
+.gm-note[hidden] {
+  display: none;
+}
+
+.challenge-detail h3 {
+  margin: 0 0 12px;
+  color: var(--teal-deep);
+  font-size: 1rem;
+}
+
+.challenge-detail ol,
+.challenge-detail ul {
+  margin: 0;
+  padding-left: 22px;
+  color: #3e4e54;
+  line-height: 1.8;
+}
+
+.drop-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-left: 0;
+  list-style: none;
+}
+
+.drop-list li {
+  padding: 6px 10px;
+  border: 1px solid rgba(31, 111, 120, 0.18);
+  border-radius: 999px;
+  color: var(--teal-deep);
+  background: rgba(223, 234, 240, 0.72);
+  font-weight: 800;
+}
+
+.gm-note {
+  margin: 18px 0 0;
+  padding: 16px 18px;
+  border-left: 4px solid var(--coral);
+  color: #3e4e54;
+  background: rgba(255, 239, 222, 0.62);
+  line-height: 1.8;
+}
+
+.future-hooks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px dashed rgba(45, 63, 70, 0.18);
+}
+
+.future-hooks span {
+  padding: 6px 10px;
+  border: 1px solid rgba(45, 63, 70, 0.14);
+  border-radius: 999px;
+  color: rgba(45, 63, 70, 0.64);
+  background: rgba(255, 253, 245, 0.54);
+  font-size: 0.86rem;
+  font-weight: 800;
 }
 
 .challenge-actions {
@@ -317,6 +411,110 @@ h1,
   cursor: not-allowed;
   opacity: 0.52;
   transform: none;
+}
+
+.feedback-panel {
+  padding: 34px 0 26px;
+  border-top: 1px solid rgba(216, 167, 70, 0.42);
+}
+
+.section-heading p:last-child {
+  max-width: 720px;
+  color: var(--muted);
+  line-height: 1.8;
+}
+
+.feedback-form {
+  display: grid;
+  gap: 16px;
+  padding: 24px;
+  border: 1px solid rgba(31, 36, 40, 0.14);
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at 12% 8%, rgba(49, 152, 150, 0.12), transparent 28%),
+    rgba(255, 253, 245, 0.84);
+  box-shadow: var(--shadow);
+}
+
+.feedback-form fieldset,
+.text-field {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 16px;
+  border: 1px solid rgba(31, 36, 40, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 250, 241, 0.72);
+}
+
+.feedback-form legend,
+.text-field span {
+  color: var(--teal-deep);
+  font-weight: 900;
+}
+
+.feedback-form fieldset {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.feedback-form legend {
+  grid-column: 1 / -1;
+  padding: 0 6px;
+}
+
+.feedback-form label {
+  color: #3e4e54;
+  line-height: 1.6;
+}
+
+.feedback-form input[type="checkbox"],
+.feedback-form input[type="radio"] {
+  width: 1rem;
+  height: 1rem;
+  margin-right: 6px;
+  accent-color: var(--teal-deep);
+}
+
+.feedback-form input[type="text"],
+.feedback-form input[type="number"],
+.feedback-form textarea {
+  width: 100%;
+  min-height: 42px;
+  padding: 10px 12px;
+  border: 1px solid rgba(31, 36, 40, 0.18);
+  border-radius: 6px;
+  color: var(--ink);
+  background: rgba(255, 253, 245, 0.92);
+  font: inherit;
+}
+
+.feedback-form textarea {
+  resize: vertical;
+}
+
+.wide-field,
+.text-field,
+.archaeologist-field {
+  grid-column: 1 / -1;
+}
+
+.score-field input {
+  max-width: 160px;
+}
+
+.feedback-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.feedback-button {
+  background: linear-gradient(135deg, var(--teal-deep), var(--teal));
+}
+
+.feedback-button.secondary {
+  background: linear-gradient(135deg, var(--coral-deep), var(--coral));
 }
 
 .card-aura {
@@ -464,8 +662,8 @@ h1,
     grid-template-columns: 1fr;
   }
 
-  h1,
-  .skill-panel h2 {
+  .quest-brief h1,
+  .draw-panel h2 {
     font-size: 3.4rem;
   }
 
@@ -482,6 +680,11 @@ h1,
   }
 
   .challenge-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .challenge-detail-grid,
+  .feedback-form fieldset {
     grid-template-columns: 1fr;
   }
 
